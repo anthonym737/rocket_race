@@ -1,0 +1,181 @@
+// Variables pour HC-SR04
+const int Echo_in_pin = 2; 
+const int Trig_out_pin = 3;
+float Dist_mm=0.0;
+
+// Vitesse du son (mm/us) 
+const double Speed_sound = 340.0e-3;
+
+// Paramètres 
+const int LED_r=5;  
+const int LED_g=6;  
+const int LED_b=7;  
+
+// Moteur 1
+const int IN1 = 5;
+const int IN2 = 6;
+
+// Moteur 2
+const int IN3 = 10;
+const int IN4 = 11;
+
+void setup() 
+{    
+    // Initialisation HC-SR04
+    pinMode(Trig_out_pin, OUTPUT);
+    pinMode(Echo_in_pin, INPUT);
+    digitalWrite(Trig_out_pin, LOW);
+  
+    // Init interface série 
+    Serial.begin(115200); 
+
+    // Initialisation des moteurs 
+    pinMode(IN1, OUTPUT);
+    pinMode(IN2, OUTPUT);
+    pinMode(IN3, OUTPUT);
+    pinMode(IN4, OUTPUT);
+  
+}
+
+void loop() 
+{       
+
+    /* Mesure de la distance */ 
+    Dist_mm=GetDisCM( Echo_in_pin,  Trig_out_pin,  Speed_sound); // Valeur brute 
+    //Dist_mm=GetMean(8,  Echo_in_pin,  Trig_out_pin,  Speed_sound); // Valeur moyenne 
+
+    /* Affichage de la distance */
+    Serial.println(Dist_mm); 
+ 
+    SetAvancer();
+                 
+
+  }
+
+
+
+// Calcul de la distance en mm 
+float GetDisCM(int Echo_in_pinn, int Trig_out_pinn, double Speed_soundd)
+{
+  float Dist_milm=0.0;
+  long HC_val=0; 
+  
+  // Déclanchement mesure avec l'envoie d'une impulsion de 10µs
+  digitalWrite(Trig_out_pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(Trig_out_pin, LOW);
+  
+  // Lecture du temps aller/retour de l'onde 
+  HC_val = pulseIn(Echo_in_pin, HIGH, 30000);
+    
+  // Calcul de distance d(mm), V=d/t==> v*t 
+  // Le coefficnet 2 pour la distance aller
+  Dist_milm = (HC_val/2.0) * Speed_sound; 
+
+  return Dist_milm;
+} 
+
+// Valeur Moyenne 
+float GetMean(long Taille, int Echo_in_pinn, int Trig_out_pinn, double Speed_soundd)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+{
+  long i;
+  float Distance_tmp, Mean_val=0.0,Somme=0.0; 
+  for(i=0; i<Taille; i++)
+  {
+    Distance_tmp=GetDisCM( Echo_in_pinn,  Trig_out_pinn,  Speed_soundd);
+    Somme=Somme+Distance_tmp; 
+  }
+  Mean_val=Somme/Taille; 
+  return Mean_val;
+}
+
+void SetAvancer()
+{
+
+
+   
+  
+
+  // Marche Avant
+  analogWrite(IN1, 255);
+  digitalWrite(IN2, 0);
+
+  analogWrite(IN3, 220);
+  digitalWrite(IN4, 0);
+  delay(1000);
+ }
+    
+void SetArreter()
+
+{
+         // Arrêt des moteurs
+        digitalWrite(IN1, 0);
+        digitalWrite(IN2, 0);
+        digitalWrite(IN3, 0);
+        digitalWrite(IN4, 0);
+
+        // Attente 0,5s
+         delay(500);
+}
+
+
+void SetGauche()
+
+{
+  //tourne a gauche
+   analogWrite(IN1, 100);
+   digitalWrite(IN2, 0);
+
+  analogWrite(IN3, 120);
+  digitalWrite(IN4, 0);
+  delay(200);
+}
+
+
+
+void SetDroite()
+
+{
+  //tourne a droite
+   analogWrite(IN1, 200);
+   digitalWrite(IN2, 0);
+
+  analogWrite(IN3, 150);
+  digitalWrite(IN4, 0);
+  delay(1000);
+}
+
+
+
+
+void SetArriereLeft()
+{
+  // Marche arrière gauche
+  digitalWrite(IN1, 0);
+  analogWrite(IN2, 100);
+  digitalWrite(IN3, 0);
+  analogWrite(IN4, 150);
+  delay(1000);
+}
+
+
+
+void SetArriereRight()
+{
+  // Marche arrière droite
+  digitalWrite(IN1, 0);
+  analogWrite(IN2, 100);
+  digitalWrite(IN3, 0);
+  analogWrite(IN4, 150);
+}
+
+
+void SetArriere()
+{
+  // Marche arrière
+  digitalWrite(IN1, 0);
+  analogWrite(IN2,100);
+  digitalWrite(IN3, 0);
+  analogWrite(IN4, 100);
+  delay(1000);
+}
