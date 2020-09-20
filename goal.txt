@@ -1,0 +1,38 @@
+
+
+// Moteur 1
+const int IN1 = 5;
+const int IN2 = 6;
+
+// Moteur 2
+const int IN3 = 10;
+const int IN4 = 11;
+
+void loop() 
+{       
+
+    /* Mesure de la distance */ 
+    Dist_mm=GetDisCM( Echo_in_pin,  Trig_out_pin,  Speed_sound); // Valeur brute 
+    //Dist_mm=GetMean(8,  Echo_in_pin,  Trig_out_pin,  Speed_sound); // Valeur moyenne 
+
+    /* Affichage de la distance */
+    Serial.println(Dist_mm); 
+ 
+    SetAvancer();
+                 
+
+  }
+
+
+
+void SetAvancer()
+{
+  // Marche Avant
+  analogWrite(IN1, 255);
+  digitalWrite(IN2, 0);
+
+  analogWrite(IN3, 220);
+  digitalWrite(IN4, 0);
+  delay(1000);
+ }
+    
